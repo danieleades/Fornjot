@@ -18,6 +18,11 @@ use self::{handle::HandleInner, vertices::Vertices};
 /// still full of holes, forcing callers to just be careful for the time being.
 #[derive(Clone, Debug)]
 pub struct Shape {
+    /// The minimum distance between two vertices
+    ///
+    /// Use for vertex validation, to determine whether vertices are unique.
+    min_distance: Scalar,
+
     vertices: VerticesInner,
 
     pub edges: Edges,
@@ -28,6 +33,11 @@ impl Shape {
     /// Construct a new shape
     pub fn new() -> Self {
         Self {
+            // This should really come from `Self::DEFAULT_MIN_DISTANCE`, or a
+            // similarly named constant. Unfortunately `Scalar::from_f64` can't
+            // be `const` yet.
+            min_distance: Scalar::from_f64(5e-7), // 0.5 µm
+
             vertices: VerticesInner::new(),
             edges: Edges { cycles: Vec::new() },
             faces: Faces(Vec::new()),
@@ -37,6 +47,7 @@ impl Shape {
     /// Access and modify the shape's vertices
     pub fn vertices(&mut self) -> Vertices {
         Vertices {
+            min_distance: self.min_distance,
             vertices: &mut self.vertices,
         }
     }
