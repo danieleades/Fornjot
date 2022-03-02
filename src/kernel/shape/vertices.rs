@@ -63,9 +63,11 @@ impl Vertices<'_> {
 mod tests {
     use crate::{kernel::shape::Shape, math::Point};
 
+    const MIN_DISTANCE: f64 = 5e-7;
+
     #[test]
     fn create_valid() {
-        let mut shape = Shape::new();
+        let mut shape = Shape::new().with_min_distance(MIN_DISTANCE);
 
         shape.vertices().create(Point::from([0., 0., 0.]));
         shape.vertices().create(Point::from([5e-6, 0., 0.]));
@@ -74,7 +76,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn create_invalid() {
-        let mut shape = Shape::new();
+        let mut shape = Shape::new().with_min_distance(MIN_DISTANCE);
 
         shape.vertices().create(Point::from([0., 0., 0.]));
         shape.vertices().create(Point::from([5e-8, 0., 0.]));
