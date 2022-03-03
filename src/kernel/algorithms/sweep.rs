@@ -14,6 +14,9 @@ pub fn sweep_shape(
     path: Vector<3>,
     tolerance: Scalar,
 ) -> Shape {
+    // TASK: This could be called with 3-dimensional shapes, but it only works
+    //       for 2-dimensional ones.
+
     let mut shape = Shape::new();
 
     let translation = Transform::translation(path);
