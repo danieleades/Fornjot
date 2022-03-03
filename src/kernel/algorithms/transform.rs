@@ -49,6 +49,9 @@ pub fn transform_face(
                             let point =
                                 transform.transform_point(&vertex.point());
 
+                            // TASK: We call this for each vertex of each edge.
+                            //       Since edges share vertices, this can't
+                            //       validate correctly.
                             shape.vertices().create(point)
                         })
                     });

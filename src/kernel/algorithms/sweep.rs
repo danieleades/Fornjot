@@ -24,6 +24,10 @@ pub fn sweep_shape(
 
     for face in &original.faces.0 {
         bottom_faces.push(face.clone());
+
+        // TASK: This can only work, if all the original faces don't share any
+        //       vertices. If they do, this will create duplicate vertices, as
+        //       `transform_face` creates new vertices per-face.
         top_faces.push(transform_face(face, &translation, &mut shape));
     }
 
