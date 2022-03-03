@@ -1,7 +1,12 @@
+use std::collections::HashMap;
+
 use crate::{
     kernel::{
         shape::Shape,
-        topology::faces::{Face, Faces},
+        topology::{
+            edges::Edge,
+            faces::{Face, Faces},
+        },
     },
     math::{Scalar, Transform, Vector},
 };
@@ -10,7 +15,7 @@ use super::{approximation::Approximation, transform::transform_face};
 
 /// Create a new shape by sweeping an existing one
 pub fn sweep_shape(
-    shape_orig: Shape,
+    mut shape_orig: Shape,
     path: Vector<3>,
     tolerance: Scalar,
 ) -> Shape {
@@ -25,7 +30,47 @@ pub fn sweep_shape(
     let mut top_faces = Vec::new();
     let mut side_faces = Vec::new();
 
-    for face in &shape_orig.faces.0 {
+    // Create new vertices.
+    let mut vertices = HashMap::new();
+    for vertex_orig in shape_orig.vertices().all() {
+        let point = vertex_orig.point() + path;
+
+        let vertex = shape.vertices().create(point);
+
+        vertices.insert(vertex_orig, vertex);
+    }
+
+    // Create top edges.
+    let mut edges = HashMap::new();
+    for cycle_orig in shape_orig.edges.cycles {
+        let mut cycle_edges = Vec::new();
+
+        for edge_orig in cycle_orig.edges {
+            let curve = edge_orig.curve.transform(&translation);
+            let vertices = edge_orig.vertices.map(|vs| {
+                vs.map(|v| {
+                    *vertices.get(&v).expect(
+                    "Edge is referring to vertex that doesn't exist in shape",
+                )
+                })
+            });
+
+            let edge = Edge::new(curve, vertices);
+            cycle_edges.
+            // TASK: We need to insert `edge` into `shape` here, but that
+            //       doesn't quite work. We're losing the cycles here, but we
+            //       need to faithfully reproduce those too.
+
+            edges.insert(edge_orig, edge);
+        }
+    }
+
+    // Create top faces.
+
+    // We could use `vertices` to create the side edges and faces here, but the
+    // side walls is created below, in triangle representation.
+
+    for face in &original.faces.0 {
         bottom_faces.push(face.clone());
 
         // TASK: This can only work, if all the original faces don't share any

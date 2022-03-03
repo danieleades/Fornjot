@@ -63,6 +63,14 @@ impl Vertices<'_> {
 
         Vertex(handle)
     }
+
+    /// Access iterator over all vertices
+    ///
+    /// The caller must not make any assumptions about the order of vertices.
+    pub fn all(&self) -> impl Iterator<Item = Vertex> {
+        // TASK: Implement
+        std::iter::empty()
+    }
 }
 
 #[cfg(test)]
