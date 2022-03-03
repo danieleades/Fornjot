@@ -10,7 +10,7 @@ use super::{approximation::Approximation, transform::transform_face};
 
 /// Create a new shape by sweeping an existing one
 pub fn sweep_shape(
-    original: Shape,
+    shape_orig: Shape,
     path: Vector<3>,
     tolerance: Scalar,
 ) -> Shape {
@@ -25,7 +25,7 @@ pub fn sweep_shape(
     let mut top_faces = Vec::new();
     let mut side_faces = Vec::new();
 
-    for face in &original.faces.0 {
+    for face in &shape_orig.faces.0 {
         bottom_faces.push(face.clone());
 
         // TASK: This can only work, if all the original faces don't share any
@@ -34,7 +34,7 @@ pub fn sweep_shape(
         top_faces.push(transform_face(face, &translation, &mut shape));
     }
 
-    for cycle in &original.edges.cycles {
+    for cycle in &shape_orig.edges.cycles {
         let approx = Approximation::for_cycle(cycle, tolerance);
 
         // This will only work correctly, if the cycle consists of one edge. If
